@@ -1,0 +1,110 @@
+\section{Silva (2026)}
+
+\subsection*{Resumo}
+
+O problema da pesquisa é entender como desenvolver um processo de precificação e previsão da taxa de câmbio USD/BRL com \emph{Q-Learning} e redes \emph{Deep Q-Networks}, DQN (p.~1--2). O objetivo declarado é gerar o valor futuro do ativo com nível de desempenho ``satisfatório'', medido pelo MSE (p.~2). O autor também esperava previsibilidade no curto e no médio prazo (p.~2).
+
+Para isso, o autor utiliza a taxa de câmbio USD/BRL diária, obtida do Yahoo Finance, de janeiro de 2010 a dezembro de 2024 (p.~5), o que resulta em aproximadamente 4.000 observações, segundo o autor (p.~4). A série é normalizada (p.~5, eqs.~8--9) e organizada em janelas de 10 dias consecutivos, usadas para prever o valor do dia seguinte, $t+1$ (p.~5, eqs.~10--11).
+
+O modelo, denominado pelo autor RL-DQN, é uma rede neural composta por uma camada convolucional, uma camada de \emph{pooling} máximo, uma camada de achatamento, uma camada densa e uma camada de saída linear com um neurônio (p.~5--6). A rede é treinada com função de perda MSE e otimizador Adam (p.~6), por 50 épocas, com 80\% dos dados para treino e 20\% para teste (p.~7).
+
+Nos resultados, o autor reporta MSE de 0,0021, MAE de 0,027 e $R^2$ de 0,89, e interpreta esses valores como confirmação da capacidade preditiva do modelo (p.~7). Segundo o autor, os erros aumentam em períodos de maior volatilidade (p.~7). O artigo apresenta ainda previsões para os 10 e os 360 dias seguintes ao fim da série (Gráfico~3, p.~8) e as compara com as cotações observadas depois, obtidas do Banco Central do Brasil (Quadro~1, p.~8--9). Como análise adicional, o autor calcula a volatilidade anualizada do dólar e do euro frente ao real em 2024 (0,1258 e 0,1274, respectivamente) e, com base em análise visual, afirma que as distribuições das duas séries diferem (p.~9 e~11).
+
+O autor conclui que o modelo tem bom desempenho apenas no médio prazo, definido como 30 a 150 dias na p.~2 e como período ``maior do que 30 dias'' na p.~11, o que o torna inadequado para \emph{daytrade} (p.~11). Para o \emph{hedge} cambial, por outro lado, a utilização do modelo ``parece ser bem promissora'' (p.~11). O autor reconhece limitações, como o tamanho da amostra (p.~4) e a piora das previsões em períodos de alta volatilidade (p.~10).
+
+\subsection*{Avaliação metodológica}
+
+\begin{description}
+    \item[Tipo de evidência:] Estudo empírico de caso único: um modelo aplicado a uma única série, a taxa de câmbio USD/BRL (p.~5--7).
+    \item[Dados:] Taxa de câmbio USD/BRL diária, obtida do Yahoo Finance, de 2010 a 2024 (p.~5), com cerca de 4.000 observações (p.~4). O modelo é univariado: segundo o autor, ``nenhuma outra variável'' foi utilizada (p.~8). Outras séries aparecem apenas fora do modelo: a cotação EUR/BRL, na análise adicional de 2024 (p.~9), e as cotações do Banco Central, na comparação do Quadro~1 (p.~9).
+    \item[Comparação:] O artigo não compara o modelo com outros modelos. O que o autor chama de ``benchmark'' no Quadro~1 (p.~8--9) compara as previsões do modelo com as cotações observadas posteriormente.
+    \item[Validação:] Os dados são divididos em 80\% para treino e 20\% para teste (p.~7). O texto não informa se essa divisão respeita a ordem cronológica. Embora mencione uma ``perda de validação'' (p.~7), não descreve um conjunto de validação separado. A ausência de \emph{overfitting} é avaliada por análise visual dos gráficos de treinamento (p.~7).
+\end{description}
+
+\paragraph{Limitações declaradas pelo autor.}
+\begin{itemize}
+    \item Segundo o autor, a amostra de cerca de 4.000 observações não é grande o suficiente para esse tipo de algoritmo (p.~4).
+    \item Citando Hilpisch (2024), o autor aponta duas desvantagens de aplicar \emph{Reinforcement Learning} (RL) ao mercado financeiro: os dados são limitados, problema que pode ser reduzido com dados sintéticos, e as ações do agente não têm impacto sobre o ambiente, pois o teste é local, e não no mercado real (p.~4).
+    \item Segundo o autor, os erros de previsão aumentam em períodos de maior volatilidade (p.~7 e~10).
+    \item O autor afirma que o modelo não pode ser usado em estratégias de curtíssimo prazo (\emph{daytrade}) (p.~11).
+\end{itemize}
+
+\paragraph{Observações desta leitura.}
+\begin{itemize}
+  \item \textbf{Modelo descrito e modelo avaliado.} 
+  O artigo descreve dois modelos diferentes. Na seção~3.2 (p.~5), o estado é a composição da carteira, a saída é o valor $Q(s,a)$ de cada alocação e a perda segue a equação de Bellman (eq.~7). Na seção~3.4 (p.~5--6), a rede recebe 10 cotações seguidas, devolve um único valor, a cotação do dia seguinte, e é treinada com MSE (eq.~16). Os resultados (p.~7) correspondem à segunda descrição. A ação e a recompensa definidas na p.~4 (compra ou venda do ativo e lucro da operação) não aparecem no experimento. O Quadro~2 também traz um ``benefício total'' (p.~10) que o texto não explica. Interpreto que o modelo avaliado é, na prática, uma regressão supervisionada da cotação, e não um agente de aprendizado por reforço. Como o artigo não indica onde está o código, não consigo confirmar isso.
+  
+  \item \textbf{Ausência de comparação.} 
+  O autor considera os valores de MSE e MAE ``baixos'' (p.~7), mas não compara o modelo com nenhuma referência. Sem essa comparação, não é possível saber se o modelo é melhor que alternativas simples. Interpreto que isso pesa principalmente no $R^2$: em séries persistentes, como o câmbio, até repetir o valor do dia anterior costuma gerar um $R^2$ alto quando medido em nível. Ou seja, o $R^2$ de 0,89, sozinho, não mostra que o modelo prevê melhor que uma regra simples.
+
+  \item \textbf{Escala das métricas.}  
+  A normalização é definida como retorno, aritmético ou logarítmico, sem dizer qual dos dois foi usado (eqs.~8--9, p.~5). Mas o alvo do modelo é a própria cotação, $x_{i+10}$ (eq.~11), e os gráficos mostram a taxa em nível. O texto não informa em que escala o MSE e o MAE foram calculados. Por isso, não é possível interpretar o tamanho dos erros reportados.
+  
+  \item \textbf{Validação.} 
+  Como o texto não diz se a divisão entre treino e teste respeita a ordem do tempo, não é possível descartar \emph{look-ahead}, ou seja, o uso de informação futura no treinamento. Interpreto também que, se a ``perda de validação'' foi calculada sobre o próprio conjunto de teste, as escolhas do modelo podem ter sido influenciadas por ele. Além disso, a ausência de \emph{overfitting} é verificada só visualmente, sem nenhum procedimento formal.
+  
+  \item \textbf{Horizonte.}
+  O modelo é treinado para prever o dia seguinte, $t+1$ (p.~5). Mesmo assim, as conclusões falam em horizontes de 30 a 150 dias (p.~2), de 360 dias (p.~8) e de mais de 30 dias (p.~11). O texto não explica como essas previsões de vários passos à frente foram geradas.
+  
+  \item \textbf{Inconsistências e terminologia.}
+  O texto descreve o Gráfico~2 como os ``primeiros duzentos períodos (dias) de treinamento'' (p.~7), mas a legenda fala em ``200 primeiros dias do teste'' (p.~8). O autor também diz que o modelo prevê ``a volatilidade da taxa cambial'' (p.~7 e~11), quando, na verdade, ele prevê o nível da  taxa. Por fim, ``precificação'' aparece no sentido de previsão de preço, e não no sentido de \emph{asset pricing} (modelos de retorno esperado e risco) usado neste trabalho.
+  
+  \item \textbf{Afirmações sem teste.} 
+  A ideia de que o modelo é promissor para \emph{hedge} cambial (p.~11) não vem acompanhada de nenhum experimento de \emph{hedge}. O argumento se apoia em citações de Hilpisch (2020) e Buehler et~al.~(2019) (p.~8). Da mesma forma, a ``diferença significativa'' entre as distribuições do dólar e do euro (p.~11) vem de uma análise visual de um gráfico de violino, sem teste estatístico. A explicação por arbitragem (p.~9) é apresentada pelo próprio autor apenas como ``uma possível explicação''.
+\end{itemize}
+
+\subsection*{O que o texto trouxe de novo}
+
+O principal ponto que o texto trouxe foi a ideia de que um problema financeiro pode ser formulado não só como uma previsão estatística, mas também como um problema de aprendizado por reforço. Nessa abordagem, um agente interage com um ambiente e aprende a partir de estados, ações e recompensas (p.~4). Isso aproxima o problema financeiro de um problema de decisão sequencial.
+
+Ao reler a metodologia, porém, percebi que formular um problema como aprendizado por reforço é diferente de implementá-lo dessa forma. O nome do método não garante o que foi feito no experimento. Por isso, é preciso conferir se a descrição do modelo corresponde aos resultados apresentados.
+
+Também ficou claro que um resultado agregado bom não significa que o modelo funcione igual em qualquer situação. Segundo o autor, os erros aumentam quando a volatilidade do mercado sobe, e o horizonte de previsão muda a utilidade do modelo. Isso reforça a importância de avaliar um modelo financeiro além de uma única métrica, observando em quais condições ele funciona e em quais seu desempenho piora.
+
+Por fim, a leitura mostrou que uma métrica só tem significado quando comparada com alguma referência. Sem um modelo simples para comparar, não é possível dizer se um erro é baixo ou alto.
+
+\subsection*{O que extrair para um trabalho autoral}
+
+Este é o artigo que mais se relaciona com o domínio financeiro do projeto, porque aplica IA a uma variável do mercado brasileiro. Os pontos abaixo são ideias para o trabalho, e não resultados do artigo.
+
+\begin{itemize}
+    \item \textbf{Pergunta de pesquisa.} Não basta perguntar se o modelo consegue prever. É preciso perguntar se a informação produzida por ele melhora uma decisão, depois de custos. Uma previsão estatisticamente boa não gera, necessariamente, uma decisão útil. O próprio artigo sugere essa ponte ao relacionar previsão ao \emph{hedge} cambial (p.~11), mas não a testa.
+
+    \item \textbf{Aprendizado por reforço de fato.} Se o problema for formulado como aprendizado por reforço, a ação e a recompensa precisam existir no experimento. No projeto, a ação é a escolha dos pesos da carteira, e a recompensa é o retorno líquido de custos com penalidade por risco. Motivação: a diferença entre o modelo descrito e o modelo avaliado em \textcite{silva2026ia}.
+
+    \item \textbf{Comparação com referências simples.}
+    Comparar o modelo com alternativas simples, usando os mesmos dados, os mesmos períodos e os mesmos critérios de validação. Para alocação, a referência principal é a divisão igual entre os ativos $(1/N)$. Motivação: a ausência de comparação em \textcite{silva2026ia}
+
+    \item \textbf{Validação temporal.} Separar treino, validação e teste respeitando a ordem do tempo, com o período de teste reservado e usado uma única vez. Motivação: a falta de descrição da divisão de dados e do conjunto de validação.
+
+    \item \textbf{Coerência do horizonte.} Avaliar o modelo no mesmo horizonte em que a decisão é tomada. Motivação: o modelo de \textcite{silva2026ia} é treinado para $t+1$, mas as conclusões falam em horizontes de semanas e meses.
+
+    \item \textbf{Análise por regime (pré-registrada).} O desempenho dos modelos pode mudar em períodos de maior volatilidade. Por isso, além do resultado agregado, o projeto avaliará o desempenho separadamente por regime de mercado, como análise secundária definida antes de usar os dados de validação.
+\end{itemize}
+
+\subsection*{Autores para catalogar}
+
+Autores citados por \textcite{silva2026ia}, selecionados pela relação com o problema do projeto. Nenhum foi lido ainda (status C). A relevância indica a prioridade de leitura.
+
+\begin{description}
+  \item[Alta:] \hfill
+  \begin{itemize}
+    \item Sutton \& Barto (2018) -- livro-texto de aprendizado por reforço.
+    \item Rao \& Jelvis (2023) -- aprendizado por reforço aplicado a finanças.
+    \item Deng et~al.~(2017) -- aprendizado por reforço para \emph{trading}.
+    \item Yang, Liu \& Zhong (2020) -- aprendizado por reforço profundo para negociação de ações.
+    \item Gu, Kelly \& Xiu (2020) -- \emph{machine learning} em \emph{asset pricing}.
+  \end{itemize}
+  \item[Média:] \hfill
+  \begin{itemize}
+    \item Powell (2022) -- aprendizado por reforço e decisões sequenciais.
+    \item Mnih et~al.~(2015) -- origem do DQN.
+    \item Buehler et~al.~(2019) -- \emph{deep hedging}.
+    \item Hilpisch (2020; 2024) -- livros práticos de IA e aprendizado por reforço em finanças.
+  \end{itemize}
+  \item[Baixa:] \hfill
+  \begin{itemize}
+    \item Plakandaras et~al.~(2015) e Wu \& Mao (2021) -- previsão de câmbio.
+    \item Cheng \& Wang (2023) -- aprendizado por reforço com divulgações financeiras.
+  \end{itemize}
+\end{description}
