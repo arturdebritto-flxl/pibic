@@ -1,4 +1,4 @@
-\section{Silva (2026)}
+\section[Silva (2026) ML: IA Aplicada ...]{Silva (2026) -- Machine Learning: Inteligência Artificial (IA) Aplicada em Precificação de Ativos Financeiros por meio de Reinforcement Learning e Deep Q-Networks (DQN)}
 
 \subsection*{Resumo}
 
@@ -72,10 +72,11 @@ Este é o artigo que mais se relaciona com o domínio financeiro do projeto, por
 
     \item \textbf{Aprendizado por reforço de fato.} Se o problema for formulado como aprendizado por reforço, a ação e a recompensa precisam existir no experimento. No projeto, a ação é a escolha dos pesos da carteira, e a recompensa é o retorno líquido de custos com penalidade por risco. Motivação: a diferença entre o modelo descrito e o modelo avaliado em \textcite{silva2026ia}.
 
-    \item \textbf{Comparação com referências simples.}
-    Comparar o modelo com alternativas simples, usando os mesmos dados, os mesmos períodos e os mesmos critérios de validação. Para alocação, a referência principal é a divisão igual entre os ativos $(1/N)$. Motivação: a ausência de comparação em \textcite{silva2026ia}
+    \item \textbf{Comparação com referências simples.} Comparar o modelo com alternativas simples, usando os mesmos dados, os mesmos períodos e os mesmos critérios de validação. Para alocação, a referência principal é a divisão igual entre os ativos ($1/N$). Motivação: a ausência de comparação em \textcite{silva2026ia}.
 
-    \item \textbf{Validação temporal.} Separar treino, validação e teste respeitando a ordem do tempo, com o período de teste reservado e usado uma única vez. Motivação: a falta de descrição da divisão de dados e do conjunto de validação.
+    \item \textbf{Validação temporal.} Separar treino, validação e teste respeitando a ordem do tempo, com o período de teste reservado e usado uma única vez. Motivação: a falta de descrição da divisão de dados e do conjunto de validação.    Além disso, a p.~6 anuncia o desvio padrão do erro como métrica de avaliação, mas esse valor não aparece no texto dos resultados.
+    % TODO: conferir o Quadro 2 (p. 10); se o desvio padrão
+    % do erro não estiver lá, trocar por "não é reportado".
 
     \item \textbf{Coerência do horizonte.} Avaliar o modelo no mesmo horizonte em que a decisão é tomada. Motivação: o modelo de \textcite{silva2026ia} é treinado para $t+1$, mas as conclusões falam em horizontes de semanas e meses.
 

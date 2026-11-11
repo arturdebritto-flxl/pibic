@@ -1,0 +1,36 @@
+\section{Vaswani et al. (2017) -- Attention is All you Need.}
+
+\subsection*{Resumo}
+
+O artigo parte de uma limitação dos modelos recorrentes: como processam a sequência de informações uma posição por vez, eles não permitem paralelizar o treinamento dentro de cada exemplo, o que se torna crítico em sequências longas (p~2). Os autores propõem a arquitetura Transformer, uma arquitetura baseada apenas em mecanismos de atenção, sem recorrência e sem convolução (p.~1--2).
+
+O modelo usa atenção com \emph{queries}, \emph{keys} e \emph{values} (p.~4), atenção com múltiplas cabeças, oito na versão principal (p.~5), e codificação posicional para representar a ordem de sequência (p.~5--6). Os autores comparam a autoatenção com camadas recorrentes e convolucionais quanto ao custo por camada, à paralelização e à distância entre posições distantes da sequência (p.~6--7).
+
+Na tradução automática, o modelo alcança 28,4 de BLEU de inglês para alemão e 41,0 o de inglês para francês, superando os melhores resultados anteriores, com treinamento de 3,5 dias em oito GPUs (p.~8). Os autores também testam variações de arquitetura, como o número de cabeças de atenção (p.~8--9), e disponibilizam o código (p.~9).
+
+\subsection*{Natureza do texto}
+
+Estudo empírico publicado em conferência com revisão por pares, com comparação em bases de teste padronizadas, testes de variações da arquitetura e código disponível. No projeto, serve como base técnica para uma extensão futura com texto e modelos de linguagem.
+
+\subsection*{O que o texto trouxe de novo}
+
+O principal conceito que o texto apresenta é que informações sequenciais não precisam ser processadas uma posição depois da outra. Com a atenção, diferentes posições de uma sequência podem estabelecer relações diretamente entre si.
+
+O artigo também esclarece o papel de \emph{query}, \emph{key} e \emph{value}. Esses elementos não representam perguntas e respostas literalmente, mas representações numéricas que o modelo usa para determinar quais informações são mais relevantes em cada contexto.
+
+Outro ponto importante é que mais paralelização não significa custo baixo. O custo da autoatenção por camada cresce com o quadrado do comprimento da sequência, $O(n^2 \cdot d)$, enquanto o da camada recorrente é $O(n \cdot d^2)$ (p.~6). Por isso, os autores sugerem restringir a atenção a uma vizinhança quando as sequências são muito longas (p.~6--7).
+
+\subsection*{O que extrair para um trabalho autoral}
+
+O artigo oferece uma arquitetura que pode servir de base para investigar relações em outros tipos de dados sequenciais. No projeto, uma possível aplicação é verificar se mecanismos de atenção identificam relações relevantes em dados financeiros.
+
+Essa aplicação não é demonstrada pelos autores, cujos experimentos são de tradução automática. Por isso, deve ser tratada como hipótese. Para testá-la, seria preciso definir os dados, a variável de interesse, o horizonte de previsão, os modelos de comparação e os critérios de avaliação.
+
+O custo quadrático também importa nesse caso: séries financeiras diárias de vários anos formam sequências longas, o que pode exigir janelas limitadas ou atenção restrita (p.~6--7).
+
+Pelo recorte do projeto, essa linha fica para a extensão com texto e modelos de linguagem, depois do artigo principal.
+
+\subsection*{Autores para catalogar}
+
+Nenhum autor citado pelo artigo é prioritário para o
+problema atual do projeto.
